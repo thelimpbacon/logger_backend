@@ -3,13 +3,19 @@ from flask import Flask, request
 from flask_socketio import SocketIO
 import eventlet
 from threading import Lock
+from sensors import Switch
+
+sensorPin1 = 25
+sensorPin2 = 20
+sensorPin3 = 21
 
 
 class SocketServer:
-    def __init__(self, host="localhost", port=8080):
+    def __init__(self, sensorBlock, host="192.168.178.51", port=8080):
 
         self.host = host
         self.port = port
+        self.sensorBlock = sensorBlock
 
         async_mode = "eventlet"
 
@@ -25,8 +31,12 @@ class SocketServer:
 
     def background_thread(self):
         while True:
-            self.socketio.sleep(3.1)
-            print("hit")
+            self.socketio.sleep(0.1)
+            # print(self.sensorBlock.read_value())
+            sensor_data = self.sensorBlock.read_value()
+            self.socketio.emit("sensor1", sensor_data["sensor1"])
+            self.socketio.emit("sensor2", sensor_data["sensor2"])
+            self.socketio.emit("sensor3", sensor_data["sensor3"])
 
     def connect(self):
         with self.thread_lock:
@@ -44,5 +54,6 @@ class SocketServer:
 
 
 if __name__ == '__main__':
-    server = SocketServer()
+    server = SocketServer(sensorBlock=Switch(
+        sensorPin1, sensorPin2, sensorPin3))
     server.run()
