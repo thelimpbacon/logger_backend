@@ -8,6 +8,11 @@ from sensors import Switch
 sensorPin1 = 25
 sensorPin2 = 20
 sensorPin3 = 21
+sensorPin4 = 5
+sensorPin5 = 6
+sensorPin6 = 13
+sensorPin7 = 19
+sensorPin8 = 26
 
 
 class SocketServer:
@@ -37,7 +42,7 @@ class SocketServer:
             sensor_data = self.sensorBlock.read_value()
 
             self.socketio.emit("sensors", {
-                               "sensor1": sensor_data["sensor1"], "sensor2": sensor_data["sensor2"], "sensor3": sensor_data["sensor3"], "tick": tick})
+                               "sensor1": sensor_data["sensor1"], "sensor2": sensor_data["sensor2"], "sensor3": sensor_data["sensor3"], "sensor4": sensor_data["sensor4"], "sensor5": sensor_data["sensor5"], "sensor6": sensor_data["sensor6"],  "sensor7": sensor_data["sensor7"], "sensor8": sensor_data["sensor8"], "tick": tick})
             tick += 1
 
             if tick == 500:
@@ -60,5 +65,5 @@ class SocketServer:
 
 if __name__ == '__main__':
     server = SocketServer(sensorBlock=Switch(
-        sensorPin1, sensorPin2, sensorPin3))
+        sensorPin1, sensorPin2, sensorPin3, sensorPin4, sensorPin5, sensorPin6, sensorPin7, sensorPin8))
     server.run()
