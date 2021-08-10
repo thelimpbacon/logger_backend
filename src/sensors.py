@@ -20,8 +20,8 @@ class Switch():
         self.sensor4 = Button(sensor4)
         self.sensor5 = Button(sensor5)
         self.sensor6 = Button(sensor6)
-        self.sensor7 = Button(sensor7)
-        self.sensor8 = Button(sensor8)
+        self.sensor7 = Button(sensor7, pull_up=False)
+        self.sensor8 = Button(sensor8, pull_up=False)
 
     def read_value(self):
         return {"sensor1": self.sensor1.value, "sensor2": self.sensor2.value, "sensor3": self.sensor3.value, "sensor4": self.sensor4.value, "sensor5": self.sensor5.value, "sensor6": self.sensor6.value, "sensor7": self.sensor7.value, "sensor8": self.sensor8.value}
