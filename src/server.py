@@ -35,6 +35,8 @@ class SocketServer:
         self.thread = None
         self.thread_lock = Lock()
 
+        self.thread_switch = False
+
     def background_thread(self):
         tick = 0
         while True:
@@ -53,8 +55,9 @@ class SocketServer:
             sensor8 = sensor_data["sensor8"]
 
             # log sensor data to disk
-            self.writer.writerow([sensor1, sensor2, sensor3, sensor4,
-                                  sensor5, sensor6, sensor7, sensor8, tick, time.time()])
+            if self.thread_switch:
+                self.writer.writerow([sensor1, sensor2, sensor3, sensor4,
+                                      sensor5, sensor6, sensor7, sensor8, tick, time.time()])
 
             self.socketio.emit("sensors", {
                 "sensor1": sensor1, "sensor2": sensor2, "sensor3": sensor3, "sensor4": sensor4,
@@ -72,6 +75,8 @@ class SocketServer:
         self.writer.writerow(["sensor1", "sensor2", "sensor3", "sensor4",
                              "sensor5", "sensor6", "sensor7", "sensor8", "tick", "actual_time"])
 
+        self.thread_switch = True
+
         with self.thread_lock:
             if self.thread is None:
                 self.thread = self.socketio.start_background_task(
@@ -80,6 +85,8 @@ class SocketServer:
         print("Connected", request.sid)
 
     def disconnect(self):
+        self.thread_switch = False
+
         # close csv
         self.file.close()
         print("Disconnected", request.sid)
